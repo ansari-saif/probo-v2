@@ -1,7 +1,10 @@
 class UserBalance:
     def __init__(self):
         self.data = {
-
+            1: {
+                "total_balance": 1500,
+                "locked_balance": 0
+            }
         }
 
     def setUserBalance(self, user_id: int, balance: float):
@@ -21,5 +24,9 @@ class UserBalance:
         self.data[user_id]["locked_balance"] -= amount
         self.data[user_id]["total_balance"] += amount
     
+    def checkSufficientBalance(self, user_id: int, amount: float):
+        return self.data[user_id]["total_balance"] >= amount
+    
+USER_BALANCE = UserBalance()
 
 

@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from app.api.v1.routes.auth import router as auth_router
 from app.api.v1.routes.event import router as event_router
+from app.api.v1.routes.trade import router as trade_router
 from app.core.database import engine
-from app.models.user import SQLModel
+from sqlmodel import SQLModel
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -22,3 +23,4 @@ def on_startup():
 
 app.include_router(auth_router, prefix="/api/v1", tags=["authentication"])
 app.include_router(event_router, prefix="/api/v1", tags=["events"])
+app.include_router(trade_router, prefix="/api/v1", tags=["trades"])
