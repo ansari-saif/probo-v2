@@ -1,5 +1,4 @@
 from app.core.user_balance import USER_BALANCE
-from app.core.orderbook import ORDER_BOOK
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from app.models.trade import TradeRead, TradeCreate
@@ -49,16 +48,8 @@ async def initiate_order(
     if order_type not in ["LO", "MO"]:
         raise HTTPException(status_code=400, detail="Invalid order type")
     price = l1_expected_price*100
-    ORDER_BOOK.add_order({
-        "offer_type": offer_type,
-        "quantity": l1_order_quantity,
-        "price": price
-    })
-
     USER_BALANCE.lockBalance(current_user.id, l1_order_quantity*price)
     print(USER_BALANCE.data)
-    print(ORDER_BOOK.buy_price)
-    print(ORDER_BOOK.sell_price)
 
     # Here you would typically call a service function to handle the order
     # For example:
