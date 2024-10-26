@@ -108,7 +108,6 @@ class TestConsumerOrderBook(unittest.TestCase):
         # User1 balance
         user1_balance = get_user_balance(1)
         self.assertEqual(user1_balance.total_balance, 11)
-        # TODO : WORKING HERE
         self.assertEqual(user1_balance.locked_balance, 0)
 
         # User3 balance
@@ -141,7 +140,7 @@ class TestConsumerOrderBook(unittest.TestCase):
         # Assert: orderbook updates after user3 sells
         self.assertListEqual(self.orderbook.sell_orders, [
             {
-                "price": 4,
+                "price": 6,
                 "quantity": 1,
                 "user_id": 2
             },

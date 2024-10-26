@@ -112,9 +112,12 @@ class OrderBook:
                     if item["price"] <= price:
                         # match order
                         match_order = True
+                        seller_order = item
                         seller_user_id = item["user_id"]
                         seller_quantity = item["quantity"]
+                        seller_price = item["price"]
                         break
+
                 if match_order:
                     # adding stock balance both
                     stock_balance.add(
@@ -126,18 +129,13 @@ class OrderBook:
                     
                     # unlock seller balance
                     seller_user_balance = get_user_balance(seller_user_id)
-                    seller_user_balance.unlockBalance(price)
+                    seller_user_balance.unlockBalance(seller_price)
 
                     # reduce buyer user balance
-                    user_balance.deductUserBalance(price)
+                    user_balance.deductUserBalance(seller_price)
 
 
-                    self.remove_order({
-                        "offer_type": offer_type,
-                        "price": price,
-                        "quantity": quantity,
-                        "user_id": user_id
-                    },seller_user_id)
+                    self.remove_order(seller_order, offer_type)
 
                 else:
                     self.add_order({
@@ -183,8 +181,10 @@ class OrderBook:
                     if item["price"] <= price:
                         # match order
                         match_order = True
+                        seller_order = item
                         seller_user_id = item["user_id"]
                         seller_quantity = item["quantity"]
+                        seller_price = item["price"]
                         break
                 if match_order:
                     # adding stock balance for both
@@ -197,16 +197,11 @@ class OrderBook:
 
                     # unlock seller balance
                     seller_user_balance = get_user_balance(seller_user_id)
-                    seller_user_balance.unlockBalance(price)
+                    seller_user_balance.unlockBalance(10-seller_price)
 
                     # reduce buyer user balance
-                    user_balance.deductUserBalance(price)
-                    self.remove_order({
-                        "offer_type": offer_type,
-                        "price": price,
-                        "quantity": quantity,
-                        "user_id": user_id
-                    },seller_user_id)
+                    user_balance.deductUserBalance(seller_price)
+                    self.remove_order(seller_order, offer_type)
 
                 else:
                     self.add_order({
@@ -262,11 +257,11 @@ class OrderBook:
         else:
             raise Exception("INVALID offer type")
         
-    def remove_order(self, order: dict, user_id):
-        target_orders = self.buy_orders if order["offer_type"] == "BUY" else self.sell_orders
+    def remove_order(self, order: dict, offer_type):
+        target_orders = self.buy_orders if offer_type == "BUY" else self.sell_orders
         for o in target_orders:
             # TODO : implement price and quantity logic
-            if o["user_id"] == user_id:
+            if o["user_id"] == order["user_id"]:
                 target_orders.remove(o)
                 break
 
