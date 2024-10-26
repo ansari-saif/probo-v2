@@ -1,6 +1,7 @@
-import pika
 import json
 import os
+
+import pika
 
 # RabbitMQ connection details
 RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
@@ -13,27 +14,27 @@ EVENT_MAP = {}
 STOCK_BALANCE_MAP = {}
 DEBUG = 0
 
+
 class UserBalance:
     def __init__(self):
-        self.total_balance: 1500
-        self.locked_balance: 0
-            
+        self.total_balance = 15
+        self.locked_balance = 0
 
-    def setUserBalance(self, balance: float):
+    def addUserBalance(self, balance: float):
         self.total_balance += balance
 
-    def getUserBalance(self, user_id: int):
-        return self.data[user_id]
+    def deductUserBalance(self, balance: float):
+        self.total_balance -= balance
 
-    def lockBalance(self, user_id: int, amount: float):
+    def lockBalance(self, amount: float):
         self.locked_balance += amount
         self.total_balance -= amount
 
-    def unlockBalance(self, user_id: int, amount: float):
+    def unlockBalance(self, amount: float):
         self.locked_balance -= amount
-        self.total_balance += amount
+        # self.total_balance += amount
 
-    def checkSufficientBalance(self, user_id: int, amount: float):
+    def checkSufficientBalance(self, amount: float):
         return self.total_balance >= amount
 
 
@@ -48,7 +49,9 @@ class StockItem:
 
 class StockBalance:
     def __init__(self):
-        self.data = {}
+        self.data = {
+            
+        }
 
     def add(self, event_id, quantity):
         if event_id not in self.data:
@@ -73,32 +76,33 @@ class StockBalance:
                 if stock_item.quantity == 0:
                     del self.data[event_id]
             else:
-                print(f"Insufficient quantity to remove for event_id {event_id}")
+                print(
+                    f"Insufficient quantity to remove for event_id {event_id}")
         else:
             print(f"Event ID {event_id} not found in stock")
 
-
     def get_stock_item(self, event_id) -> StockItem:
         return self.data.get(event_id, None)
-    
+
     def __repr__(self):
         return f"StockBalance(data={self.data})"
 
 
-
 class OrderBook:
-    def __init__(self, event_id: int, buy_orders: list, sell_orders: list, buy_price: float, sell_price: float):
+    def __init__(self, event_id: int, buy_orders: list, sell_orders: list, yes_price: float, no_price: float):
         self.event_id = event_id
         self.buy_orders = buy_orders
         self.sell_orders = sell_orders
-        self.buy_price = buy_price
-        self.sell_price = sell_price
+        self.yes_price = yes_price
+        self.no_price = no_price
         self.adjustment_factor = 0.5
 
     def match_order(self, offer_type, price, quantity, user_id, is_reverse):
         # TODO : I just've to check the quantity
         match_order = False
-        if offer_type == "buy":
+        stock_balance = get_stock_balance(user_id)
+        user_balance = get_user_balance(user_id)
+        if offer_type == "BUY":
             # check actually buy order
             if not is_reverse:
                 # then match current price and lower will be matched
@@ -112,14 +116,29 @@ class OrderBook:
                         seller_quantity = item["quantity"]
                         break
                 if match_order:
-                    seller_stock_balance = get_stock_balance(seller_user_id)
-                    seller_stock_balance.remove(
-                        self.event_id, seller_quantity
-                    )
-                    stock_balance = get_stock_balance(user_id)
+                    # adding stock balance both
                     stock_balance.add(
                         self.event_id, seller_quantity
                     )
+                    seller_stock_balance = get_stock_balance(seller_user_id)
+                    seller_stock_balance.add(self.event_id, seller_quantity)
+
+                    
+                    # unlock seller balance
+                    seller_user_balance = get_user_balance(seller_user_id)
+                    seller_user_balance.unlockBalance(price)
+
+                    # reduce buyer user balance
+                    user_balance.deductUserBalance(price)
+
+
+                    self.remove_order({
+                        "offer_type": offer_type,
+                        "price": price,
+                        "quantity": quantity,
+                        "user_id": user_id
+                    },seller_user_id)
+
                 else:
                     self.add_order({
                         "offer_type": offer_type,
@@ -127,23 +146,68 @@ class OrderBook:
                         "quantity": quantity,
                         "user_id": user_id
                     })
+                    # lock balance
+                    user_balance.lockBalance(price)
             else:
+                # will do later
+                pass
+                # # then match current price and lower will be matched
+                # # TODO : check stock balance first of the current user
+                # seller_user_id = None
+                # seller_quantity = None
+                # for item in self.buy_orders:
+                #     if item["price"] >= price:
+                #         # match order
+                #         match_order = True
+                #         seller_user_id = item["user_id"]
+                #         seller_quantity = item["quantity"]
+                #         break
+                # if match_order:
+                #     STOCK_BALANCE_MAP.get(seller_user_id).add(
+                #         self.event_id, seller_quantity)
+                #     STOCK_BALANCE_MAP.get(user_id).remove(
+                #         self.event_id, seller_quantity)
+                # else:
+                #     self.add_order({
+                #         "offer_type": offer_type,
+                #         "price": price,
+                #         "quantity": quantity,
+                #         "user_id": user_id
+                #     })
+        elif offer_type == "SELL":
+            if not is_reverse:
                 # then match current price and lower will be matched
-                # TODO : check stock balance first of the current user
-                seller_user_id = None
                 seller_quantity = None
-                for item in self.buy_orders:
-                    if item["price"] >= price:
+                seller_user_id = None
+                for item in self.sell_orders:
+                    if item["price"] <= price:
                         # match order
                         match_order = True
                         seller_user_id = item["user_id"]
                         seller_quantity = item["quantity"]
                         break
                 if match_order:
-                    STOCK_BALANCE_MAP.get(seller_user_id).add(
-                        self.event_id, seller_quantity)
-                    STOCK_BALANCE_MAP.get(user_id).remove(
-                        self.event_id, seller_quantity)
+                    # adding stock balance for both
+                    stock_balance.add(
+                        self.event_id, seller_quantity
+                    )
+                    seller_stock_balance = get_stock_balance(seller_user_id)
+                    seller_stock_balance.add(self.event_id, seller_quantity)
+
+
+                    # unlock seller balance
+                    seller_user_balance = get_user_balance(seller_user_id)
+                    seller_user_balance.unlockBalance(price)
+
+                    # reduce buyer user balance
+                    user_balance.deductUserBalance(price)
+                    self.remove_order({
+                        "offer_type": offer_type,
+                        "price": price,
+                        "quantity": quantity,
+                        "user_id": user_id
+                    },seller_user_id)
+
                 else:
                     self.add_order({
                         "offer_type": offer_type,
@@ -151,35 +215,61 @@ class OrderBook:
                         "quantity": quantity,
                         "user_id": user_id
                     })
-            if match_order:
-                self.adjust_prices()
+                    # lock balance
+                    user_balance.lockBalance(price)
+            else:
+                pass
+            # reverse order
+            # implement here sell logic
+        else:
+            raise Exception("Invalid offer type")
+        self.adjust_prices()
 
     def initiate_order(self, offer_type, price, quantity, user_id, is_reverse):
         self.match_order(offer_type, price, quantity, user_id, is_reverse)
 
     def calculate_demand_supply(self):
-        total_demand = sum(order['quantity'] * order['price'] for order in self.buy_orders)
-        total_supply = sum(order['quantity'] * order['price'] for order in self.sell_orders)
+        total_demand = sum(order['quantity'] * order['price']
+                           for order in self.buy_orders)
+        total_supply = sum(order['quantity'] * order['price']
+                           for order in self.sell_orders)
         return total_demand, total_supply
-
 
     def adjust_prices(self):
         total_demand, total_supply = self.calculate_demand_supply()
         if total_demand > total_supply:
-            self.buy_price += self.adjustment_factor
-            self.sell_price -= self.adjustment_factor
+            self.no_price += self.adjustment_factor
+            self.yes_price -= self.adjustment_factor
         elif total_supply > total_demand:
-            self.buy_price -= self.adjustment_factor
-            self.sell_price += self.adjustment_factor
+            self.no_price -= self.adjustment_factor
+            self.yes_price += self.adjustment_factor
 
     def add_order(self, order: dict):
         # with user_id
         # total = offer_type, quantity, price, user_id
-        if order["offer_type"] == "buy":
-            self.buy_orders.append(order)
+        if order["offer_type"] == "BUY":
+            self.sell_orders.append({
+                "price": 10-order["price"],
+                "quantity": order["quantity"],
+                "user_id": order["user_id"]
+            })
+        elif order["offer_type"] == "SELL":
+            self.buy_orders.append({
+                "price": 10-order["price"],
+                "quantity": order["quantity"],
+                "user_id": order["user_id"]
+            })
         else:
-            self.sell_orders.append(order)
-        self.adjust_prices()
+            raise Exception("INVALID offer type")
+        
+    def remove_order(self, order: dict, user_id):
+        target_orders = self.buy_orders if order["offer_type"] == "BUY" else self.sell_orders
+        for o in target_orders:
+            # TODO : implement price and quantity logic
+            if o["user_id"] == user_id:
+                target_orders.remove(o)
+                break
+
 
 
 def connect_to_rabbitmq():
@@ -193,14 +283,19 @@ def connect_to_rabbitmq():
     channel.queue_declare(queue=RABBITMQ_QUEUE, durable=True)
     return channel
 
-def get_orderbook(event_id)->OrderBook:
-    return EVENT_MAP[event_id]
 
-def get_user_balance(user_id)->UserBalance:
-    return USER_MAP[user_id]
+def get_orderbook(event_id) -> OrderBook:
+    return EVENT_MAP.get(event_id)  # Returns None if event_id is not found
 
-def get_stock_balance(user_id)->StockBalance:
-    return STOCK_BALANCE_MAP[user_id]
+
+def get_user_balance(user_id) -> UserBalance:
+    return USER_MAP.get(user_id)  # Returns None if user_id is not found
+
+
+def get_stock_balance(user_id) -> StockBalance:
+    # Returns None if user_id is not found
+    return STOCK_BALANCE_MAP.get(user_id)
+
 
 def process_orderbook(orderbook_data):
     event_id = orderbook_data["event_id"]
@@ -215,43 +310,48 @@ def process_orderbook(orderbook_data):
             event_id=event_id,
             buy_orders=[],
             sell_orders=[],
-            buy_price=5,
-            sell_price=5
+            yes_price=5,
+            no_price=5
         )
+    if not STOCK_BALANCE_MAP.get(orderbook_data["user_id"]):
+        STOCK_BALANCE_MAP[orderbook_data["user_id"]] = StockBalance()
 
     orderbook = get_orderbook(orderbook_data["event_id"])
     l1_expected_price = orderbook_data.get("l1_expected_price")
-    price = l1_expected_price*100
+    price = l1_expected_price
     orderbook.initiate_order(
         offer_type, price, orderbook_data["l1_order_quantity"], user_id, is_reverse
     )
 
     processed_data = {
         "processed": True,
-        "buy_price": orderbook.buy_price,
-        "sell_price": orderbook.sell_price,
+        "yes_price": orderbook.yes_price,
+        "no_price": orderbook.no_price,
         "buy_orders": orderbook.buy_orders,
         "sell_orders": orderbook.sell_orders
     }
     return processed_data
 
+
 def publish_queue(data, queue_name):
     RABBITMQ_CONNECTION = pika.BlockingConnection(
-            pika.ConnectionParameters(RABBITMQ_HOST, int(RABBITMQ_PORT),
-                                      RABBITMQ_USERNAME,
-                                      pika.PlainCredentials(RABBITMQ_USERNAME,
-                                                            RABBITMQ_PASSWORD)))
+        pika.ConnectionParameters(RABBITMQ_HOST, int(RABBITMQ_PORT),
+                                  RABBITMQ_USERNAME,
+                                  pika.PlainCredentials(RABBITMQ_USERNAME,
+                                                        RABBITMQ_PASSWORD)))
     RABBITMQ_CHANNEL = RABBITMQ_CONNECTION.channel()
     RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key=queue_name,
                                    body=json.dumps(data, default=str).encode('utf-8'))
     RABBITMQ_CONNECTION.close()
 
+
 def consumer(body):
     processed_data = process_orderbook(body)
-    publish_queue("orderbook_queue_acknowledgment", processed_data)
+    publish_queue(processed_data, "orderbook_queue_acknowledgment")
 
 
 input_data = {}
+
 
 def main():
     if DEBUG:
@@ -274,10 +374,11 @@ def main():
                 error_text = str(E)
                 print(error_text)
 
-        RABBITMQ_CHANNEL.basic_consume(queue=RABBITMQ_QUEUE, on_message_callback=callback)
+        RABBITMQ_CHANNEL.basic_consume(
+            queue=RABBITMQ_QUEUE, on_message_callback=callback)
         print(' [*] Waiting for messages. To exit press CTRL+C')
         RABBITMQ_CHANNEL.start_consuming()
 
 
 if __name__ == '__main__':
-     main()
+    main()
