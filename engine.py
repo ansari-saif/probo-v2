@@ -151,6 +151,15 @@ class OrderBook:
 
                     for order in matched_orders:
                         self.remove_order(order, offer_type)
+                    if remaining_quantity != 0:
+                        self.add_order({
+                            "offer_type": offer_type,
+                            "price": price,
+                            "quantity": remaining_quantity,
+                            "user_id": user_id
+                        })
+                        user_balance.lockBalance(price*remaining_quantity)
+
                 else:
                     self.add_order({
                         "offer_type": offer_type,
@@ -232,6 +241,14 @@ class OrderBook:
                     for order in matched_orders:
                         self.remove_order(order, offer_type)
 
+                    if remaining_quantity != 0:
+                        self.add_order({
+                            "offer_type": offer_type,
+                            "price": price,
+                            "quantity": remaining_quantity,
+                            "user_id": user_id
+                        })
+                        user_balance.lockBalance(price*remaining_quantity)
                 else:
                     self.add_order({
                         "offer_type": offer_type,

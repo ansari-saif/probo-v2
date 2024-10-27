@@ -315,16 +315,16 @@ class TestConsumerOrderBook(unittest.TestCase):
         
         # user2Balance
         user2_balance = get_user_balance(2)
-        self.assertEqual(user2_balance.total_balance, 1390)
+        self.assertEqual(user2_balance.total_balance, 1395)
         self.assertEqual(user2_balance.locked_balance, 0)
         
         # stockBalance
         stock_balance = get_stock_balance(4)
-        self.assertEqual(stock_balance.get_stock_item(self.event_id).quantity, 8)
+        self.assertEqual(stock_balance.get_stock_item(self.event_id).quantity, 7)
 
-    #     # stock2Balance
-    #     stock_balance = get_stock_balance(2)
-    #     self.assertEqual(stock_balance.get_stock_item(self.event_id).quantity, 15)
+        # stock2Balance
+        stock_balance = get_stock_balance(2)
+        self.assertEqual(stock_balance.get_stock_item(self.event_id).quantity, 15)
 
 
 
