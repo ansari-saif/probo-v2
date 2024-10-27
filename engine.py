@@ -17,7 +17,7 @@ DEBUG = 0
 
 class UserBalance:
     def __init__(self):
-        self.total_balance = 15
+        self.total_balance = 1500
         self.locked_balance = 0
 
     def addUserBalance(self, balance: float):
@@ -50,7 +50,7 @@ class StockItem:
 class StockBalance:
     def __init__(self):
         self.data = {
-            
+
         }
 
     def add(self, event_id, quantity):
@@ -102,22 +102,38 @@ class OrderBook:
         match_order = False
         stock_balance = get_stock_balance(user_id)
         user_balance = get_user_balance(user_id)
+        remaining_quantity = quantity
         if offer_type == "BUY":
             # check actually buy order
             if not is_reverse:
                 # then match current price and lower will be matched
                 seller_user_id = None
-                seller_quantity = None
+                seller_quantity = 0
+                matched_orders = []
                 for item in self.buy_orders:
                     if item["price"] <= price:
-                        # match order
                         match_order = True
-                        seller_order = item
-                        seller_user_id = item["user_id"]
-                        seller_quantity = item["quantity"]
-                        seller_price = item["price"]
-                        break
+                        if item["quantity"] <= remaining_quantity:
+                            # Fully match the seller's quantity
+                            remaining_quantity -= item["quantity"]
+                            matched_orders.append({**item, "is_partial" : False}) 
+                            seller_user_id = item["user_id"]
+                            seller_quantity += item["quantity"]
+                            seller_price = item["price"]
+                            # Check if order is completely fulfilled
+                            if remaining_quantity == 0:
+                                break
+                        else:
+                            # Partially match seller's quantity
+                            item["quantity"] -= remaining_quantity
+                            matched_orders.append({**item, "is_partial" : True}) 
+                            seller_user_id = item["user_id"]
+                            seller_price = item["price"]
+                            seller_quantity += remaining_quantity
+                            remaining_quantity = 0
+                            break
 
+                # TODO : HANDLE WHERE remaining_quantity != 0 
                 if match_order:
                     # adding stock balance both
                     stock_balance.add(
@@ -126,17 +142,15 @@ class OrderBook:
                     seller_stock_balance = get_stock_balance(seller_user_id)
                     seller_stock_balance.add(self.event_id, seller_quantity)
 
-                    
                     # unlock seller balance
                     seller_user_balance = get_user_balance(seller_user_id)
-                    seller_user_balance.unlockBalance(seller_price)
+                    seller_user_balance.unlockBalance((10-seller_price)*seller_quantity)
 
                     # reduce buyer user balance
-                    user_balance.deductUserBalance(seller_price)
+                    user_balance.deductUserBalance(seller_price*seller_quantity)
 
-
-                    self.remove_order(seller_order, offer_type)
-
+                    for order in matched_orders:
+                        self.remove_order(order, offer_type)
                 else:
                     self.add_order({
                         "offer_type": offer_type,
@@ -145,7 +159,7 @@ class OrderBook:
                         "user_id": user_id
                     })
                     # lock balance
-                    user_balance.lockBalance(price)
+                    user_balance.lockBalance(price*quantity)
             else:
                 # will do later
                 pass
@@ -175,17 +189,32 @@ class OrderBook:
         elif offer_type == "SELL":
             if not is_reverse:
                 # then match current price and lower will be matched
-                seller_quantity = None
+                seller_quantity = 0
                 seller_user_id = None
+                matched_orders = []
                 for item in self.sell_orders:
                     if item["price"] <= price:
-                        # match order
                         match_order = True
-                        seller_order = item
-                        seller_user_id = item["user_id"]
-                        seller_quantity = item["quantity"]
-                        seller_price = item["price"]
-                        break
+                        if item["quantity"] <= remaining_quantity:
+                            # Fully match the seller's quantity
+                            remaining_quantity -= item["quantity"]
+                            matched_orders.append({**item, "is_partial" : False}) 
+                            seller_user_id = item["user_id"]
+                            seller_price = item["price"]
+                            seller_quantity += item["quantity"]
+                            # Check if order is completely fulfilled
+                            if remaining_quantity == 0:
+                                break
+                        else:
+                            # Partially match seller's quantity
+                            item["quantity"] -= remaining_quantity
+                            matched_orders.append({**item, "is_partial" : True}) 
+                            seller_user_id = item["user_id"]
+                            seller_quantity += remaining_quantity
+                            seller_price = item["price"]
+                            remaining_quantity = 0
+                            break
+                # TODO : HANDLE WHERE remaining_quantity != 0 
                 if match_order:
                     # adding stock balance for both
                     stock_balance.add(
@@ -194,14 +223,14 @@ class OrderBook:
                     seller_stock_balance = get_stock_balance(seller_user_id)
                     seller_stock_balance.add(self.event_id, seller_quantity)
 
-
                     # unlock seller balance
                     seller_user_balance = get_user_balance(seller_user_id)
-                    seller_user_balance.unlockBalance(10-seller_price)
+                    seller_user_balance.unlockBalance((10-seller_price)*seller_quantity)
 
                     # reduce buyer user balance
-                    user_balance.deductUserBalance(seller_price)
-                    self.remove_order(seller_order, offer_type)
+                    user_balance.deductUserBalance(seller_price*seller_quantity)
+                    for order in matched_orders:
+                        self.remove_order(order, offer_type)
 
                 else:
                     self.add_order({
@@ -211,7 +240,7 @@ class OrderBook:
                         "user_id": user_id
                     })
                     # lock balance
-                    user_balance.lockBalance(price)
+                    user_balance.lockBalance(price*quantity)
             else:
                 pass
             # reverse order
@@ -244,27 +273,29 @@ class OrderBook:
         # total = offer_type, quantity, price, user_id
         if order["offer_type"] == "BUY":
             self.sell_orders.append({
-                "price": 10-order["price"],
+                "price": 10 - order["price"],
                 "quantity": order["quantity"],
                 "user_id": order["user_id"]
             })
+            self.sell_orders.sort(key=lambda x: x["price"])
+
         elif order["offer_type"] == "SELL":
             self.buy_orders.append({
-                "price": 10-order["price"],
+                "price": 10 - order["price"],
                 "quantity": order["quantity"],
                 "user_id": order["user_id"]
             })
+            self.buy_orders.sort(key=lambda x: x["price"])
         else:
             raise Exception("INVALID offer type")
-        
+
     def remove_order(self, order: dict, offer_type):
         target_orders = self.buy_orders if offer_type == "BUY" else self.sell_orders
         for o in target_orders:
             # TODO : implement price and quantity logic
-            if o["user_id"] == order["user_id"]:
+            if o["user_id"] == order["user_id"] and order["is_partial"] == False:
                 target_orders.remove(o)
                 break
-
 
 
 def connect_to_rabbitmq():
