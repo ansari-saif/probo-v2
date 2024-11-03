@@ -521,7 +521,14 @@ def consumer(body):
     publish_queue(processed_data, "orderbook_queue_acknowledgment")
 
 
-input_data = {}
+input_data = {
+    "event_id": 1,
+    "user_id": 1,
+    "offer_type": "buy",
+    "l1_expected_price": 5,
+    "l1_order_quantity": 100,
+    "is_reverse": False
+}
 
 
 def main():
