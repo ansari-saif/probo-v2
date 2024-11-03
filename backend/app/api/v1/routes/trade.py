@@ -1,10 +1,13 @@
-from app.core.user_balance import USER_BALANCE
+from app.core.common_utils import publish_queue, subscribe_queue
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from app.models.trade import TradeRead, TradeCreate
-from app.services.trade_service import get_user_trades_per_event, create_trade, get_user_trades, get_trade_by_id
+from app.services.trade_service import  create_trade, get_user_trades
 from app.services.user_service import get_current_user
 from app.models.user import User
+from app.core.constraints import RABBITMQ_QUEUE
+import asyncio
+
 router = APIRouter()
 
 @router.post("/trades", response_model=TradeRead, status_code=status.HTTP_201_CREATED)
@@ -41,30 +44,35 @@ async def initiate_order(
     # Validate required fields
     if not all([event_id, offer_type, order_type, l1_order_quantity, l1_expected_price]):
         raise HTTPException(status_code=400, detail="Missing required fields")
+    
+    # TODO : I've to read this 
+    # order_status_future = asyncio.Future()
 
     # Validate offer_type and order_type
-    if offer_type not in ["buy", "sell"]:
+    if offer_type not in ["BUY", "SELL"]:
         raise HTTPException(status_code=400, detail="Invalid offer type")
     if order_type not in ["LO", "MO"]:
         raise HTTPException(status_code=400, detail="Invalid order type")
-    price = l1_expected_price*100
-    USER_BALANCE.lockBalance(current_user.id, l1_order_quantity*price)
-    print(USER_BALANCE.data)
 
-    # Here you would typically call a service function to handle the order
-    # For example:
-    # result = trade_service.initiate_order(
-    #     user_id=current_user.id,
-    #     event_id=event_id,
-    #     offer_type=offer_type,
-    #     order_type=order_type,
-    #     quantity=l1_order_quantity,
-    #     price=l1_expected_price
-    # )
-    
-    # For now, we'll just return a dummy response
+    data_to_publish = {
+        "event_id": event_id,
+        "user_id": current_user.id,
+        "offer_type": offer_type,
+        "l1_expected_price": l1_expected_price,
+        "l1_order_quantity": l1_order_quantity,
+        "is_reverse": False
+    }
+    order_status_future = asyncio.create_task(subscribe_queue(current_user.id))
+
+    publish_queue(data_to_publish, RABBITMQ_QUEUE)
+    try:
+        order_status = await asyncio.wait_for(order_status_future, timeout=5.0)
+        print(order_status_future)
+    except asyncio.TimeoutError:
+        order_status = "Pending"  # Default status if no response is received in time
+
     return {
-        "status": "success",
+        "status": order_status,
         "message": "Order initiated successfully",
         "order_details": order_data
     }
