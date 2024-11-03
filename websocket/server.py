@@ -14,14 +14,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# HTML Page
-@app.get("/", response_class=HTMLResponse)
-async def get():
-    with open("index.html") as f:
-        return f.read()
-
 # WebSocket Endpoint
-@app.websocket("/ws")
+@app.websocket("/")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
