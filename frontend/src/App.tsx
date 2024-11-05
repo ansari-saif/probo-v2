@@ -1,17 +1,24 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import TodoList from './pages/TodoList';
-import AddTodoForm from './components/AddTodoForm';
-const App: React.FC = () => {
+import "./App.css";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { EventDetailsPage } from "./eventDetailsPage";
+import { LandingPage } from "./landingPage";
+import { EventPage } from "./eventPage";
+
+function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<TodoList />} />
-        <Route path="/add" element={<AddTodoForm onAdd={() => {}} />} />
-      </Routes>
-    </Router>
+    <>
+      <Router>
+        <div className="bg-[#F5F5F5] w-full h-full">
+          {/* <Watchlist /> */}
+          <Routes>
+            <Route path="/" element={<LandingPage/>} />
+            <Route path="/events" element={<EventPage />} />
+            <Route path="/event-details" element={<EventDetailsPage />} />
+          </Routes>
+        </div>
+      </Router>
+    </>
   );
-};
+}
 
-
-export default App
+export default App;
