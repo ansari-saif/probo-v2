@@ -24,3 +24,4 @@ sqlmodel==0.0.14
 starlette==0.27.0
 typing_extensions==4.12.2
 uvicorn==0.23.2
+
