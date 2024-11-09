@@ -282,7 +282,7 @@ export const EventsCompo = () => {
             </div>
           </div>
         </div>
-        <BuySellCard />
+        <BuySellCard eventDetail={eventDetail} />
       </div>
     </>
   );

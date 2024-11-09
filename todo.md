@@ -9,7 +9,7 @@ integrate websocket
 
 
 create python script to add all events {cm:2024-11-09}
-event detail page
-    get id from query params and call event detail page
-    display data like heading and yes and no pricing 
-    
+event detail page {cm:2024-11-09}
+    get id from query params and call event detail page {cm:2024-11-09}
+    display data like heading and yes and no pricing
+

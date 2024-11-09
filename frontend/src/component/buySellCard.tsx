@@ -4,12 +4,12 @@ import errorIcon from "../assets/error.avif";
 import { Switch } from "../utils/switch";
 import { useState } from "react";
 
-export const BuySellCard = () => {
+export const BuySellCard = ({eventDetail}) => {
   const [buyTab, setBuyTab] = useState("yes");
   const [price, setPrice] = useState(0.5);
   const [quantity, setQuantity] = useState(1);
   const [advancedOption, setAdvancedOption] = useState(false);
-
+  
   return (
     <>
       <div className="border sticky top-20 rounded-xl xl:w-1/3 w-full flex flex-col justify-center p-5 h-fit bg-white mt-24">
@@ -30,7 +30,7 @@ export const BuySellCard = () => {
                 : "bg-white text-black"
             } `}
           >
-            YES ₹9.5
+            YES ₹{eventDetail.last_traded_price_for_yes}
           </button>
           <button
             value="no"
@@ -40,7 +40,7 @@ export const BuySellCard = () => {
                 : "bg-white text-black"
             } `}
           >
-            NO ₹0.5
+            NO ₹{eventDetail.last_traded_price_for_no}
           </button>
         </div>
         <div className="border w-24 rounded-2xl px-2 flex justify-center py-1 font-bold mt-4">
