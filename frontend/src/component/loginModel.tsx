@@ -30,7 +30,7 @@ const getUserBalance = (token, setUserBalance) => {
         .catch((error) => console.error(error));
 }
 
-function loginModel({ isOpen, setIsOpen, userBalance, setUserBalance }) {
+function loginModel({ isOpen, setIsOpen, setUserBalance }) {
     const [firstStep, setFirstStep] = useState(true)
     const [phoneNumber, setPhoneNumber] = useState('');
 

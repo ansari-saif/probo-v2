@@ -13,7 +13,7 @@ const Header = () => {
 
     return (
         <div className="flex items-center justify-between bg-gray-100 px-6 py-2 border-b border-gray-200">
-            <LoginModel isOpen={isOpen} setIsOpen={setIsOpen}  userBalance={userBalance} setUserBalance={setUserBalance}/>
+            <LoginModel isOpen={isOpen} setIsOpen={setIsOpen} setUserBalance={setUserBalance}/>
             {/* Left side: Logo and links */}
             <div className="flex items-center space-x-8">
                 {/* Logo */}
