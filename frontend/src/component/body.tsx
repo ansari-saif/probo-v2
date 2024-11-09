@@ -40,7 +40,7 @@ export const BodyContent = () => {
               <h1 className="text-xl font-bold ">
                 DOWNLOAD APP FOR BETTER & FAST EXPERIENCE
               </h1>
-              <button onClick={()=> setIsDownload(true)} className="bg-black text-sm mt-2 px-10 p-2 rounded text-white font-medium">
+              <button onClick={() => setIsDownload(true)} className="bg-black text-sm mt-2 px-10 p-2 rounded text-white font-medium">
                 Download Now
               </button>
             </div>
