@@ -1,10 +1,11 @@
 from app.models.user import User
 from app.schemas.auth import OTPVerificationRequest
-from app.services.user_service import verify_otp
+from app.services.user_service import get_current_user, verify_otp
 from fastapi import APIRouter, HTTPException, status
 from datetime import timedelta
 from app.services.user_service import create_access_token, get_user_by_mobile, generate_otp, create_user
 from app.core.config import settings
+from fastapi import APIRouter, Depends, HTTPException, status
 
 router = APIRouter()
 
@@ -45,3 +46,8 @@ async def login_request(user: User):
     # In a real-world scenario, you'd send this OTP to the user's mobile number
     # For this example, we'll just return it (don't do this in production!)
     return {"otp": otp}
+
+
+@router.get("/user/balance")
+async def get_balance(current_user: User = Depends(get_current_user)):
+    return current_user

@@ -15,4 +15,8 @@ phelel frontend ka karo {cm:2024-11-09}
     taost integration
 
 
-frontend header design
+ab me kya karoongs 
+    after login 
+    i've to call get user balance api 
+    and display on header section 
+    

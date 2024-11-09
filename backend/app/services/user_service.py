@@ -65,6 +65,7 @@ def get_user_by_mobile(mobile: str):
 
 def create_user(user: UserCreate):
     with Session(engine) as session:
+        user.balance = 15
         db_user = User.from_orm(user)
         session.add(db_user)
         session.commit()
