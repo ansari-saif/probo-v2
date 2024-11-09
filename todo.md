@@ -9,7 +9,10 @@ login and store data in the localstorage .
 all apis will get token from localstorage itself
 
 
-phelel frontend ka karo 
+phelel frontend ka karo {cm:2024-11-09}
     login api hit on success oto inbox should be visible on submit otp will store otp in local --done
     and show success or failure toast 
     taost integration
+
+
+frontend header design

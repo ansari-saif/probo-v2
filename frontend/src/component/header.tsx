@@ -2,8 +2,6 @@ import { useState } from "react";
 import LoginModel from "./loginModel"
 
 const checkIsLoggedIn = () => {
-    console.log(localStorage.access_token);
-    
     return localStorage.access_token
 }
 const Header = () => {
