@@ -1,12 +1,13 @@
 import { RoutingCompo } from "../utils/routingComp";
 import bitcoing from "../assets/bitcoin.avif";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PriceTable } from "./pricingTable";
 import userProfile from "../assets/userprofile.avif";
 import { ProgressBar } from "./progressBar";
 import { CustomChart } from "./timelineChart";
 import { ReadMoreText } from "../utils/readMore";
 import { BuySellCard } from "./buySellCard";
+import { getEventDetail } from "@/utils/getEvents";
 
 
 const navigationBar = [
@@ -102,6 +103,21 @@ const description =
   "Bitcoin is a decentralized digital currency that can be transferred on the peer-to-peer bitcoin network. Bitcoin transactions are verified by network nodes through cryptography and recorded in a public distributed ledger called a blockchain. Open price at expiry time as displayed on the source of truth will be considered";
 
 export const EventsCompo = () => {
+  const [eventDetail, setEventDetail] = useState({})
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    const fetchDetailEvent = async () => {
+      if (id) {
+        const eventDetalData = await getEventDetail(id);
+        if (eventDetalData) {
+          setEventDetail(eventDetalData)
+        }
+      }
+    };
+    fetchDetailEvent();
+  }, []);
+
   const [navigatioName, setNavigationName] = useState<
     navigationType | "" | string
   >("");
@@ -128,11 +144,11 @@ export const EventsCompo = () => {
               className="rounded-[50%] object-contain"
               width={100}
               height={100}
-              src={bitcoing}
+              src={eventDetail.image_url}
               alt="bitcoin"
             />
             <h1 className="font-bold text-4xl object-contain">
-              Bitcoin to be priced at 67364.34 USDT or more at 03:55 AM?
+              {eventDetail.event_name}
             </h1>
           </div>
           {/* navigation bar */}
@@ -143,11 +159,10 @@ export const EventsCompo = () => {
                   onClick={() => handleNavigationClick(item.value, item.value)}
                   key={item.id}
                   value={item.value}
-                  className={`${
-                    navigatioName === item.value
+                  className={`${navigatioName === item.value
                       ? "border-b-2 border-black pb-3"
                       : ""
-                  }`}
+                    }`}
                 >
                   {item.title}
                 </li>
@@ -157,20 +172,18 @@ export const EventsCompo = () => {
           {/* order book */}
           <div
             id="orderbook"
-            className={`${
-              activeTab === 2 && "h-72"
-            }  border px-8 rounded-xl overflow-scroll bg-white`}
+            className={`${activeTab === 2 && "h-72"
+              }  border px-8 rounded-xl overflow-scroll bg-white`}
           >
             <div className="text-sm cursor-pointer border-b-[#E3E3E3] bg-white z-10 border-b-2 sticky top-0 flex gap-10 px-2">
               {orderBookTab.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`pb-3 text-[16px] text-[#545454] pt-5 cursor-pointer relative transition-all duration-300 ease-in-out ${
-                    activeTab === item.id
+                  className={`pb-3 text-[16px] text-[#545454] pt-5 cursor-pointer relative transition-all duration-300 ease-in-out ${activeTab === item.id
                       ? "font-bold text-black"
                       : "font-normal text-[#575757]"
-                  }`}
+                    }`}
                 >
                   {item.title}
                   {activeTab === item.id && (
@@ -269,7 +282,7 @@ export const EventsCompo = () => {
             </div>
           </div>
         </div>
-       <BuySellCard/>       
+        <BuySellCard />
       </div>
     </>
   );
