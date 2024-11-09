@@ -4,14 +4,24 @@ import { symbols } from "../db/data";
 import { TradeCard } from "./tradCard";
 import tshirt from "../assets/Tshirt.avif";
 import { Download } from "./download";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getEvents } from "@/utils/getEvents";
 
 export const BodyContent = () => {
-  const [isDownload, setIsDownload] = useState(false)
+  const [isDownload, setIsDownload] = useState(false);
+  const [eventData, setEventData] = useState([])
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const eventData = await getEvents();
+      if (eventData){
+        setEventData(eventData)
+    }
+    };
+    fetchEvents();
+  }, []);
   return (
     <>
       <div className="p-4 relative px-10 flex">
-
         <div className="lg:w-[70%] w-[100%] ">
           <h1 className="text-xl font-semibold mb-3">Top Stories</h1>
           <TopStories />
@@ -20,14 +30,14 @@ export const BodyContent = () => {
             <hr />
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {symbols.map((symbol) => (
+              {eventData.map((symbol) => (
                 <TradeCard
                   symbol={symbol}
-                  url={symbol.url}
-                  yesPrice={symbol.yesPrice}
-                  noPrice={symbol.noPrice}
-                  totalTrades={symbol.traders}
-                  title={symbol.title}
+                  url={symbol.image_url}
+                  yesPrice={symbol.last_traded_price_for_yes}
+                  noPrice={symbol.last_traded_price_for_no}
+                  totalTrades={"0"}
+                  title={symbol.event_name}
                   description={symbol.description}
                 />
               ))}

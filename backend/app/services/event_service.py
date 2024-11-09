@@ -22,3 +22,26 @@ def get_event_by_id(event_id: int) -> Event:
         statement = select(Event).where(Event.id == event_id)
         event = session.exec(statement).first()
     return event
+
+def delete_event(event_id: int) -> bool:
+    with Session(engine) as session:
+        statement = select(Event).where(Event.id == event_id)
+        event = session.exec(statement).first()
+        if event:
+            session.delete(event)
+            session.commit()
+            return True
+        return False
+
+def delete_events() -> bool:
+    with Session(engine) as session:
+        try:
+            statement = select(Event)
+            events = session.exec(statement).all()
+            for event in events:
+                session.delete(event)
+            session.commit()
+            return True
+        except Exception:
+            return False
+

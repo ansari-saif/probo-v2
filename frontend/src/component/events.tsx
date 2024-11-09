@@ -1,12 +1,11 @@
-import { useRef, useState } from "react";
+import {  useRef, useState } from "react";
 import { events } from "../db/data";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { symbols } from "../db/data";
 
 export const Events = () => {
   const [activeTab, setActiveTab] = useState(1);
-  const sliderRef = useRef<HTMLDivElement>(null);
-
+  const sliderRef = useRef<HTMLDivElement>(null);  
   const scrollLeft = () => {
     if (sliderRef.current) {
       sliderRef.current.scrollBy({ left: -700, behavior: "smooth" });

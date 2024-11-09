@@ -1,0 +1,13 @@
+export const getEvents = async () => {
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow" as RequestRedirect
+    };
+
+    try {
+        const response = await fetch("http://localhost:8000/api/v1/events", requestOptions);
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+    }
+}

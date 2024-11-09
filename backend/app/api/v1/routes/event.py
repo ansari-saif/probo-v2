@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from app.models.event import EventCreate, Event, EventRead
-from app.services.event_service import create_event, get_event_by_id, get_all_events
+from app.services.event_service import create_event, delete_events, get_event_by_id, get_all_events
 from app.services.user_service import get_current_user
 from app.models.user import User
 
@@ -27,3 +27,24 @@ async def read_event(event_id: int):
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     return event
+
+# @router.delete("/events/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
+# async def delete_event(event_id: int, current_user: User = Depends(get_current_user)):
+#     event = get_event_by_id(event_id)
+#     if event is None:
+#         raise HTTPException(status_code=404, detail="Event not found")
+        
+#     # Here you might want to add authorization logic
+#     # to check if current user has permission to delete events
+    
+#     if not delete_event(event_id):
+#         raise HTTPException(status_code=400, detail="Failed to delete event")
+    
+#     return None
+@router.delete("/events", status_code=status.HTTP_200_OK)
+async def delete_all_events(current_user: User = Depends(get_current_user)):
+    result = delete_events()
+    if not result:
+        raise HTTPException(status_code=400, detail="Failed to delete all events")
+    return {"message": "All events deleted successfully"}
+

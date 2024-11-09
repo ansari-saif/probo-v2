@@ -24,6 +24,7 @@ class EventBase(SQLModel):
     traders_count: str = Field(max_length=20)
     event_slug: str = Field(max_length=255)
     share_link: str = Field(max_length=255)
+    image_url: Optional[str] = Field(max_length=500, default=None)
 
 class EventCreate(EventBase):
     pass
@@ -53,6 +54,7 @@ class EventUpdate(SQLModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     event_slug: Optional[str] = None
     share_link: Optional[str] = None
+    image_url: Optional[str] = None
 
 class EventRead(EventBase):
     id: int
