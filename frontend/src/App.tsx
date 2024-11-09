@@ -3,12 +3,16 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { EventDetailsPage } from "./eventDetailsPage";
 import { LandingPage } from "./landingPage";
 import { EventPage } from "./eventPage";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <>
       <Router>
         <div className="bg-[#F5F5F5] w-full h-full">
+        <ToastContainer />
+
           {/* <Watchlist /> */}
           <Routes>
             <Route path="/" element={<LandingPage/>} />

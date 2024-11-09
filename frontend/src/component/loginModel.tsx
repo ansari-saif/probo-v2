@@ -2,6 +2,7 @@
 import { Dialog } from '@headlessui/react';
 import { useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
+import { toast, Bounce } from 'react-toastify';
 
 function loginModel({ isOpen, setIsOpen }) {
     const [firstStep, setFirstStep] = useState(true)
@@ -40,7 +41,21 @@ function loginModel({ isOpen, setIsOpen }) {
             .then((response) => {
                 if (response.status === 200) {
                     setFirstStep(false);
-                    console.log("success");
+                    console.log("succ");
+                    
+                    toast('✅ Please check SMS section for the OTP!!', {
+                        position: "top-center",
+                        autoClose: 2500,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: false,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
+
+
                 } else {
                     console.log("failed");
                 }
@@ -72,18 +87,24 @@ function loginModel({ isOpen, setIsOpen }) {
         fetch("http://localhost:8000/api/v1/user/validateOtp", requestOptions)
             .then((response) => {
                 if (response.status === 200) {
-                    console.log("success");
+                    return response.json();
                 } else {
-                    console.log("failed");
+                    return false
                 }
-                return response.text()
+
             })
             .then((result) => {
-                // logic here
+                if (result) {
+                    alert("otp succcess");
+                    setIsOpen(false);
+                    localStorage.access_token = result.access_token
+                } else {
+                    alert("otp failed")
+                }
             })
             .catch((error) => console.error("error - code phat gya "));
     };
-    
+
     return (
         <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed inset-0 z-10 flex items-center justify-center">
             <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
@@ -130,86 +151,86 @@ function loginModel({ isOpen, setIsOpen }) {
                                         <p className="text-gray-600 mb-4">OTP has been sent to +91-{phoneNumber}</p>
 
                                         <div className="flex justify-center gap-2 mb-4">
-                                            <input 
-                                                type="text" 
-                                                maxLength={1} 
-                                                value={otp1} 
+                                            <input
+                                                type="text"
+                                                maxLength={1}
+                                                value={otp1}
                                                 onChange={(e) => handleOtpChange(e, setOtp1)}
                                                 onKeyUp={(e) => {
-                                                    if(e.key !== "Backspace" && e.target.value) {
+                                                    if (e.key !== "Backspace" && e.target.value) {
                                                         document.querySelector('input[name="otp2"]')?.focus();
                                                     }
                                                 }}
                                                 className="w-10 h-10 border border-gray-300 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 name="otp1"
                                             />
-                                            <input 
-                                                type="text" 
-                                                maxLength={1} 
+                                            <input
+                                                type="text"
+                                                maxLength={1}
                                                 value={otp2}
                                                 onChange={(e) => handleOtpChange(e, setOtp2)}
                                                 onKeyUp={(e) => {
-                                                    if(e.key === "Backspace" && !e.target.value) {
+                                                    if (e.key === "Backspace" && !e.target.value) {
                                                         document.querySelector('input[name="otp1"]')?.focus();
-                                                    } else if(e.key !== "Backspace" && e.target.value) {
+                                                    } else if (e.key !== "Backspace" && e.target.value) {
                                                         document.querySelector('input[name="otp3"]')?.focus();
                                                     }
                                                 }}
                                                 className="w-10 h-10 border border-gray-300 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 name="otp2"
                                             />
-                                            <input 
-                                                type="text" 
-                                                maxLength={1} 
+                                            <input
+                                                type="text"
+                                                maxLength={1}
                                                 value={otp3}
                                                 onChange={(e) => handleOtpChange(e, setOtp3)}
                                                 onKeyUp={(e) => {
-                                                    if(e.key === "Backspace" && !e.target.value) {
+                                                    if (e.key === "Backspace" && !e.target.value) {
                                                         document.querySelector('input[name="otp2"]')?.focus();
-                                                    } else if(e.key !== "Backspace" && e.target.value) {
+                                                    } else if (e.key !== "Backspace" && e.target.value) {
                                                         document.querySelector('input[name="otp4"]')?.focus();
                                                     }
                                                 }}
                                                 className="w-10 h-10 border border-gray-300 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 name="otp3"
                                             />
-                                            <input 
-                                                type="text" 
-                                                maxLength={1} 
+                                            <input
+                                                type="text"
+                                                maxLength={1}
                                                 value={otp4}
                                                 onChange={(e) => handleOtpChange(e, setOtp4)}
                                                 onKeyUp={(e) => {
-                                                    if(e.key === "Backspace" && !e.target.value) {
+                                                    if (e.key === "Backspace" && !e.target.value) {
                                                         document.querySelector('input[name="otp3"]')?.focus();
-                                                    } else if(e.key !== "Backspace" && e.target.value) {
+                                                    } else if (e.key !== "Backspace" && e.target.value) {
                                                         document.querySelector('input[name="otp5"]')?.focus();
                                                     }
                                                 }}
                                                 className="w-10 h-10 border border-gray-300 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 name="otp4"
                                             />
-                                            <input 
-                                                type="text" 
-                                                maxLength={1} 
+                                            <input
+                                                type="text"
+                                                maxLength={1}
                                                 value={otp5}
                                                 onChange={(e) => handleOtpChange(e, setOtp5)}
                                                 onKeyUp={(e) => {
-                                                    if(e.key === "Backspace" && !e.target.value) {
+                                                    if (e.key === "Backspace" && !e.target.value) {
                                                         document.querySelector('input[name="otp4"]')?.focus();
-                                                    } else if(e.key !== "Backspace" && e.target.value) {
+                                                    } else if (e.key !== "Backspace" && e.target.value) {
                                                         document.querySelector('input[name="otp6"]')?.focus();
                                                     }
                                                 }}
                                                 className="w-10 h-10 border border-gray-300 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 name="otp5"
                                             />
-                                            <input 
-                                                type="text" 
-                                                maxLength={1} 
+                                            <input
+                                                type="text"
+                                                maxLength={1}
                                                 value={otp6}
                                                 onChange={(e) => handleOtpChange(e, setOtp6)}
                                                 onKeyUp={(e) => {
-                                                    if(e.key === "Backspace" && !e.target.value) {
+                                                    if (e.key === "Backspace" && !e.target.value) {
                                                         document.querySelector('input[name="otp5"]')?.focus();
                                                     }
                                                 }}
