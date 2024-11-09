@@ -7,7 +7,6 @@ export const LandingPage = () =>{
 
     return(
         <>
-          <Header/>
           <LandingComp/>
         </>
     )

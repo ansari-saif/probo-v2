@@ -55,9 +55,18 @@ function loginModel({ isOpen, setIsOpen }) {
                         transition: Bounce,
                     });
 
-
                 } else {
-                    console.log("failed");
+                    toast('ⓧ Something went wrong!!', {
+                        position: "top-center",
+                        autoClose: 2500,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: false,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
                 }
                 return response.json()
             }
@@ -95,11 +104,31 @@ function loginModel({ isOpen, setIsOpen }) {
             })
             .then((result) => {
                 if (result) {
-                    alert("otp succcess");
                     setIsOpen(false);
                     localStorage.access_token = result.access_token
+                    toast('✅ Logged in successfully', {
+                        position: "top-center",
+                        autoClose: 2500,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: false,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
                 } else {
-                    alert("otp failed")
+                    toast('ⓧ Invalid OTP', {
+                        position: "top-center",
+                        autoClose: 2500,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: false,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
                 }
             })
             .catch((error) => console.error("error - code phat gya "));
