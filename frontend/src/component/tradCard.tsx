@@ -1,6 +1,7 @@
 import trades from "../assets/trades.avif";
 import coma from "../assets/coma.avif";
 import { Button } from "../utils/buttons";
+import { useNavigate } from "react-router-dom";
 
 interface TradeCardType {
   symbol: any;
@@ -21,6 +22,8 @@ export const TradeCard = ({
   title,
   description,
 }: TradeCardType) => {
+  const navigate = useNavigate();
+
   return (
     <>
       <div
@@ -45,7 +48,10 @@ export const TradeCard = ({
             src={url}
             alt="tradeicon"
           />
-          <h2 className="text-lg py-2 font-medium">{title}</h2>
+          <h2 className="text-lg py-2 font-medium cursor-pointer"
+                onClick={() => navigate(`/event-details?id=${symbol.id}`)}
+          
+          >{title}</h2>
         </div>
         <span className="flex text-[#5E5E5E] text-xs mt-4">
           <img
