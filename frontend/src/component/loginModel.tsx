@@ -1,6 +1,6 @@
 // App.js
 import { Dialog } from '@headlessui/react';
-import { useState } from 'react';
+import { useState, useRef, useEffect} from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { toast, Bounce } from 'react-toastify';
 
@@ -16,9 +16,9 @@ const getUserBalance = (token, setUserBalance) => {
 
     fetch("http://localhost:8000/api/v1/user/balance", requestOptions)
         .then((response) => {
-            if(response.status == 200){
+            if (response.status == 200) {
                 return response.json()
-            }else{
+            } else {
                 return false;
             }
         })
@@ -33,6 +33,7 @@ const getUserBalance = (token, setUserBalance) => {
 function loginModel({ isOpen, setIsOpen, setUserBalance }) {
     const [firstStep, setFirstStep] = useState(true)
     const [phoneNumber, setPhoneNumber] = useState('');
+    const inputRef = useRef(null);
 
     const [otp1, setOtp1] = useState("");
     const [otp2, setOtp2] = useState("");
@@ -40,6 +41,23 @@ function loginModel({ isOpen, setIsOpen, setUserBalance }) {
     const [otp4, setOtp4] = useState("");
     const [otp5, setOtp5] = useState("");
     const [otp6, setOtp6] = useState("");
+
+    const clearOtp = () => {
+        setOtp1("");
+        setOtp2("");
+        setOtp3("");
+        setOtp4("");
+        setOtp5("");
+        setOtp6("");
+        setFirstStep(true);
+        setPhoneNumber("")
+    }
+    useEffect(() => {
+        if (!firstStep){
+            inputRef.current.focus();
+        }
+    }, [firstStep])
+    
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPhoneNumber(e.target.value);
     };
@@ -141,6 +159,8 @@ function loginModel({ isOpen, setIsOpen, setUserBalance }) {
                         theme: "light",
                         transition: Bounce,
                     });
+                    
+                    clearOtp();
 
                 } else {
                     toast('ⓧ Invalid OTP', {
@@ -206,6 +226,7 @@ function loginModel({ isOpen, setIsOpen, setUserBalance }) {
 
                                         <div className="flex justify-center gap-2 mb-4">
                                             <input
+                                                ref={inputRef}
                                                 type="text"
                                                 maxLength={1}
                                                 value={otp1}

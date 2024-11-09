@@ -5,11 +5,16 @@ import { Home, Briefcase, Wallet, ChevronDown, Settings, LogOut, User } from 'lu
 const checkIsLoggedIn = () => {
     return localStorage.access_token
 }
+
+
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [userBalance, setUserBalance] = useState(0)
-
+    const logOut = () => {    
+        localStorage.clear();
+        setIsDropdownOpen(false);
+    }
 
     return (
         <div className="flex items-center justify-between bg-gray-100 px-6 py-2 border-b border-gray-200">
@@ -88,7 +93,8 @@ const Header = () => {
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
                             >
-                                <div className="w-8 h-8 bg-gray-200 rounded-full" />
+                                
+                                <img src="https://probo.in/_next/image?url=https%3A%2F%2Fprobo.gumlet.io%2Fimage%2Fupload%2Fprobo_product_images%2FSilhouette.png&w=96&q=75" className="w-8 h-8 bg-gray-200 rounded-full" />
                                 <ChevronDown className="w-4 h-4 text-gray-600" />
                             </button>
 
@@ -96,24 +102,10 @@ const Header = () => {
                                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                     <div className="py-1">
                                         <button
-                                            className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            onClick={() => setIsDropdownOpen(false)}
-                                        >
-                                            <User className="w-4 h-4 mr-2" />
-                                            Profile
-                                        </button>
-                                        <button
-                                            className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            onClick={() => setIsDropdownOpen(false)}
-                                        >
-                                            <Settings className="w-4 h-4 mr-2" />
-                                            Settings
-                                        </button>
-                                        <button
                                             className="flex w-full items-center px-4 py-2 text-sm text-red-500 hover:bg-gray-100 hover:text-red-600"
-                                            onClick={() => setIsDropdownOpen(false)}
+                                            onClick={logOut}
                                         >
-                                            <LogOut className="w-4 h-4 mr-2" />
+                                            <LogOut className="w-4 h-4 mr-2"  />
                                             Sign out
                                         </button>
                                     </div>
