@@ -4,7 +4,33 @@ import { useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { toast, Bounce } from 'react-toastify';
 
-function loginModel({ isOpen, setIsOpen }) {
+const getUserBalance = (token, setUserBalance) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`);
+
+    const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow"
+    };
+
+    fetch("http://localhost:8000/api/v1/user/balance", requestOptions)
+        .then((response) => {
+            if(response.status == 200){
+                return response.json()
+            }else{
+                return false;
+            }
+        })
+        .then((result) => {
+            if (result) {
+                setUserBalance(Number(result.balance))
+            }
+        })
+        .catch((error) => console.error(error));
+}
+
+function loginModel({ isOpen, setIsOpen, userBalance, setUserBalance }) {
     const [firstStep, setFirstStep] = useState(true)
     const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -14,7 +40,6 @@ function loginModel({ isOpen, setIsOpen }) {
     const [otp4, setOtp4] = useState("");
     const [otp5, setOtp5] = useState("");
     const [otp6, setOtp6] = useState("");
-
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPhoneNumber(e.target.value);
     };
@@ -41,8 +66,6 @@ function loginModel({ isOpen, setIsOpen }) {
             .then((response) => {
                 if (response.status === 200) {
                     setFirstStep(false);
-                    console.log("succ");
-                    
                     toast('✅ Please check SMS section for the OTP!!', {
                         position: "top-center",
                         autoClose: 2500,
@@ -106,6 +129,7 @@ function loginModel({ isOpen, setIsOpen }) {
                 if (result) {
                     setIsOpen(false);
                     localStorage.access_token = result.access_token
+                    getUserBalance(result.access_token, setUserBalance)
                     toast('✅ Logged in successfully', {
                         position: "top-center",
                         autoClose: 2500,
@@ -117,6 +141,7 @@ function loginModel({ isOpen, setIsOpen }) {
                         theme: "light",
                         transition: Bounce,
                     });
+
                 } else {
                     toast('ⓧ Invalid OTP', {
                         position: "top-center",

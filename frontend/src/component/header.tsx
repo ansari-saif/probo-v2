@@ -8,11 +8,12 @@ const checkIsLoggedIn = () => {
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [userBalance, setUserBalance] = useState(0)
 
 
     return (
         <div className="flex items-center justify-between bg-gray-100 px-6 py-2 border-b border-gray-200">
-            <LoginModel isOpen={isOpen} setIsOpen={setIsOpen} />
+            <LoginModel isOpen={isOpen} setIsOpen={setIsOpen}  userBalance={userBalance} setUserBalance={setUserBalance}/>
             {/* Left side: Logo and links */}
             <div className="flex items-center space-x-8">
                 {/* Logo */}
@@ -77,7 +78,7 @@ const Header = () => {
                         <div className="flex items-center">
                             <button className="flex items-center space-x-2 px-4 py-1.5 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
                                 <Wallet className="w-4 h-4 text-gray-600" />
-                                <span className="text-gray-900 font-medium">₹13</span>
+                                <span className="text-gray-900 font-medium">{userBalance}</span>
                             </button>
                         </div>
 
