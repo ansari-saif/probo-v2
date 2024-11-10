@@ -17,3 +17,7 @@ event detail page {cm:2024-11-09}
 
 trade wala nahi chal rha yaarrr ....
 call get user balance api
+
+now what I've to do
+    create frontend for websocket  and room logic 
+    push data from post to server should be reflect on frontend
