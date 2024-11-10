@@ -38,12 +38,6 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-# HTML Page
-@app.get("/", response_class=HTMLResponse)
-async def get():
-    with open("index.html") as f:
-        return f.read()
-
 # WebSocket Endpoint with room support
 @app.websocket("/ws/{room_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id: str):
