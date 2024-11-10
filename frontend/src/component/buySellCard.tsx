@@ -3,6 +3,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import errorIcon from "../assets/error.avif";
 import { Switch } from "../utils/switch";
 import { useState } from "react";
+import { orderInitiate } from "@/utils/placeOrder";
 
 export const BuySellCard = ({eventDetail}) => {
   const [buyTab, setBuyTab] = useState("yes");
@@ -142,7 +143,7 @@ export const BuySellCard = ({eventDetail}) => {
           <div className="absolute -top-3 left-9 w-5 h-5 bg-white border-l border-t border-gray-300 rotate-45"></div>
         </div>
         {/* advanced options */}
-        <div className="flex flex-col items-center justify-center mt-4">
+        {/* <div className="flex flex-col items-center justify-center mt-4">
           {advancedOption && (
             <div className="border rounded-xl w-full mb-2">
               <div className="border-b flex justify-between p-3">
@@ -184,8 +185,8 @@ export const BuySellCard = ({eventDetail}) => {
               className={`${advancedOption && "rotate-180"}`}
             />
           </button>
-        </div>
-        <div className="flex justify-around mt-4">
+        </div> */}
+        {/* <div className="flex justify-around mt-4">
           <div className="flex gap-5">
           <img className="object-contain" src={errorIcon} alt="low_balance" />
           <div className="flex flex-col">
@@ -196,10 +197,10 @@ export const BuySellCard = ({eventDetail}) => {
           <button className="rounded-lg p-2 px-4 text-white bg-black font-semibold">
             Recharge
           </button>
-        </div>
+        </div> */}
         <button
-          disabled
-          className="w-full p-4 text-white bg-[#E3E3E3] rounded-lg mt-4 font-bold"
+          className="w-full p-4 text-white bg-blue-500 hover:bg-blue-600 rounded-lg mt-4 font-bold"
+          onClick={()=>orderInitiate(eventDetail.id, quantity, price, buyTab == "yes" ? "BUY" : "SELL")}
         >
           Place order
         </button>
