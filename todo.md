@@ -26,3 +26,14 @@ now what I've to do
 now I've to push data from consumer 
     this is data should be reflect in the frontend side ‸‸‸‸‸‸
     then its done 
+
+
+data push to ho gya hai 
+    but frontend par accept karna rhe gya hai 
+    ab frontend par accept karne ke liye
+    i've to integrate in my project (vo to asan hai js ka copy kar loonga)
+    ab baat ati hai data integtation ki these I've to do 
+    data integration and
+    bar movement 
+    and its done sir .....
+    
