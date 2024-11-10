@@ -9,3 +9,5 @@ containerized all services
     frontend
 
 go through all k8 session and done it  your self
+    https://github.com/codes30/k8s-week-3
+    https://projects.100xdevs.com/tracks/kubernetes-1/Kubernetes-Part-1-1
