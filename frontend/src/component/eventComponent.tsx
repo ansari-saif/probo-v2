@@ -33,65 +33,53 @@ const orderBookTab = [
     id: 1,
     title: "Order Book",
   },
-  {
-    id: 2,
-    title: "Activity",
-  },
+  // {
+  //   id: 2,
+  //   title: "Activity",
+  // },
 ];
 
 const progressData = [
-  {
-    id: 1,
-    userIcon: userProfile,
-    userName: ["Prober", "Prober"],
-    yesValue: 6.5,
-    noValue: 3.5,
-  },
-  {
-    id: 2,
-    userIcon: userProfile,
-    userName: ["Prober", "Prober"],
-    yesValue: 4,
-    noValue: 6,
-  },
-  {
-    id: 3,
-    userIcon: userProfile,
-    userName: ["Prober", "Prober"],
-    yesValue: 5,
-    noValue: 5,
-  },
-  {
-    id: 4,
-    userIcon: userProfile,
-    userName: ["Prober", "Prober"],
-    yesValue: 2,
-    noValue: 8,
-  },
-  {
-    id: 5,
-    userIcon: userProfile,
-    userName: ["Prober", "Prober"],
-    yesValue: 4,
-    noValue: 6,
-  },
+  // {
+  //   id: 1,
+  //   userIcon: userProfile,
+  //   userName: ["Prober", "Prober"],
+  //   yesValue: 6.5,
+  //   noValue: 3.5,
+  // },
+  // {
+  //   id: 2,
+  //   userIcon: userProfile,
+  //   userName: ["Prober", "Prober"],
+  //   yesValue: 4,
+  //   noValue: 6,
+  // },
+  // {
+  //   id: 3,
+  //   userIcon: userProfile,
+  //   userName: ["Prober", "Prober"],
+  //   yesValue: 5,
+  //   noValue: 5,
+  // },
+  // {
+  //   id: 4,
+  //   userIcon: userProfile,
+  //   userName: ["Prober", "Prober"],
+  //   yesValue: 2,
+  //   noValue: 8,
+  // },
+  // {
+  //   id: 5,
+  //   userIcon: userProfile,
+  //   userName: ["Prober", "Prober"],
+  //   yesValue: 4,
+  //   noValue: 6,
+  // },
 ];
 
-const dataYes = [
-  { price: 7, qty: 465510, width: "w-1/12" },
-  { price: 7.5, qty: 290450, width: "w-5/12" },
-  { price: 8, qty: 105919, width: "w-8/12" },
-  { price: 8.5, qty: 94744, width: "w-0" },
-  { price: 9, qty: 120071, width: "w-0" },
-];
 
-const dataNo = [
-  { price: 3.5, qty: 358537, width: "w-1/12" },
-  { price: 4, qty: 242664, width: "w-5/12" },
-  { price: 4.5, qty: 72327, width: "w-8/12" },
-  { price: 5, qty: 50544, width: "w-0" },
-  { price: 5.5, qty: 56733, width: "w-0" },
-];
+
+
 
 interface navigationType {
   orderbook?: string;
@@ -103,7 +91,48 @@ const description =
   "Bitcoin is a decentralized digital currency that can be transferred on the peer-to-peer bitcoin network. Bitcoin transactions are verified by network nodes through cryptography and recorded in a public distributed ledger called a blockchain. Open price at expiry time as displayed on the source of truth will be considered";
 
 export const EventsCompo = () => {
-  const [eventDetail, setEventDetail] = useState({})
+  const [eventDetail, setEventDetail] = useState({});
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [orderData, setOrderData] = useState<WebSocketData['data'] | null>(null);
+  const [dataYes, setDataYes] = useState([]);
+  const [dataNo, setDataNo] = useState([]);
+  
+  useEffect(() => {    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    
+    if (id) {
+      const ws = new WebSocket(`ws://localhost:9000/ws/${id}`);
+      
+      ws.onmessage = (event) => {
+        try {
+          const parsedData: WebSocketData = JSON.parse(event.data);          
+          setOrderData(()=>{
+            setDataYes(parsedData.data.buy_orders);
+            setDataNo(parsedData.data.sell_orders);
+            return parsedData.data
+          });
+          
+          
+                    
+        } catch (error) {
+          // console.error('Error parsing WebSocket data:', error);
+        }
+        
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket disconnected");
+      };
+
+      setSocket(ws);
+
+      // Cleanup on unmount
+      return () => {
+        ws.close();
+      };
+    }
+  }, []);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
@@ -198,13 +227,14 @@ export const EventsCompo = () => {
             {activeTab === 1 ? (
               <div className="pt-5 flex gap-5">
                 <div className="w-1/2">
-                  <PriceTable data={dataYes} qty={"YES"} />
+                  <PriceTable data={dataYes} order_type={"YES"} />
                 </div>
                 <div className="w-1/2">
-                  <PriceTable data={dataNo} qty={"NO"} />
+                  <PriceTable data={dataNo} order_type={"NO"} />
                 </div>
               </div>
             ) : (
+              // TODO : display here websocket data 
               progressData.map((val) => (
                 <ProgressBar
                   value1={val.yesValue}
@@ -212,7 +242,8 @@ export const EventsCompo = () => {
                   userNames={["Prober", "Prober"]}
                   userIcon={userProfile}
                 />
-              ))
+              )
+            )
             )}
           </div>
           <div

@@ -12,7 +12,7 @@ RABBITMQ_PORT = 5672
 USER_MAP = {}
 EVENT_MAP = {}
 STOCK_BALANCE_MAP = {}
-DEBUG = 0
+DEBUG = 1
 from websocket import create_connection
 
 
