@@ -16,16 +16,16 @@ const navigationBar = [
     title: "Order book",
     value: "orderbook",
   },
-  {
-    id: 2,
-    title: "Timeline",
-    value: "timeline",
-  },
-  {
-    id: 3,
-    title: "Overview",
-    value: "overview",
-  },
+  // {
+  //   id: 2,
+  //   title: "Timeline",
+  //   value: "timeline",
+  // },
+  // {
+  //   id: 3,
+  //   title: "Overview",
+  //   value: "overview",
+  // },
 ];
 
 const orderBookTab = [
@@ -215,8 +215,14 @@ export const EventsCompo = () => {
               ))
             )}
           </div>
-          {/* timeline */}
           <div
+            id="timeline"
+            className=" border p-4 px-8 pt-8 rounded-xl flex flex-col items-center bg-white"
+          >
+       
+          </div> 
+          {/* timeline */}
+          {/* <div
             id="timeline"
             className=" border p-4 px-8 pt-8 rounded-xl flex flex-col items-center bg-white"
           >
@@ -227,9 +233,9 @@ export const EventsCompo = () => {
               80% probability of Yes
             </h1>
             <CustomChart />
-          </div>
+          </div> */}
           {/* Stats */}
-          <div id="stats" className=" border p-8 bg-white rounded-xl">
+          {/* <div id="stats" className=" border p-8 bg-white rounded-xl">
             <h3 className="text-2xl font-semibold mb-5">Stats</h3>
             <div className="border rounded-lg p-5">
               <h1 className="font-semibold pt-2 text-md pb-3">Overview</h1>
@@ -243,9 +249,9 @@ export const EventsCompo = () => {
                 will be considered
               </p>
             </div>
-          </div>
+          </div> */}
           {/* About */}
-          <div id="overview" className=" border p-8 bg-white rounded-xl">
+          {/* <div id="overview" className=" border p-8 bg-white rounded-xl">
             <h1 className="text-2xl font-bold">About the event</h1>
             <div className="xl:flex block space-y-5 mt-8 items-start justify-between w-full text-sm font-medium text-gray-800">
               <div className="flex w-1/3 flex-col">
@@ -280,7 +286,7 @@ export const EventsCompo = () => {
               </span>
               {ReadMoreText(description)}
             </div>
-          </div>
+          </div> */}
         </div>
         <BuySellCard eventDetail={eventDetail} />
       </div>

@@ -51,7 +51,7 @@ export const BuySellCard = ({eventDetail}) => {
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <h2 className="text-lg font-bold">Price</h2>
-              <span className="text-sm text-gray-400">0 qty available</span>
+              {/* <span className="text-sm text-gray-400">0 qty available</span> */}
             </div>
             <div
               onClick={(e: any) => {

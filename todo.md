@@ -4,7 +4,7 @@ event {cm:2024-11-09}
     create more events from postman with the same content as probo {cm:2024-11-09}
     integrate get event api on frontend side {cm:2024-11-09}
 
-integrate trade api
+integrate trade api {cm:2024-11-10}
 integrate websocket
 
 
