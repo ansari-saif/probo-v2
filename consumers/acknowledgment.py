@@ -17,17 +17,31 @@ from websocket import create_connection
 
 
 def consumer(body):
-    ws = create_connection("ws://localhost:8080")
+    event_id = body["event_id"]
+    url = f"ws://localhost:9000/ws/{event_id}"
+    print(url)
+    ws = create_connection(url)
     data_to_send = {
-        "event":"message",
-        "room":"test",
-        "message":body
+        "data":body
     }
     ws.send(json.dumps(data_to_send))
     ws.close()
 
 
-input_data = {}
+input_data = {
+    "processed": True,
+    "yes_price": 5.5,
+    "no_price": 4.5,
+    "buy_orders": [],
+    "sell_orders": [
+        {
+            "price": 5,
+            "quantity": 100,
+            "user_id": 1
+        }
+    ],
+     "event_id": 1
+}
 
 
 def main():

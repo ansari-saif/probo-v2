@@ -499,7 +499,8 @@ def process_orderbook(orderbook_data):
         "yes_price": orderbook.yes_price,
         "no_price": orderbook.no_price,
         "buy_orders": orderbook.buy_orders,
-        "sell_orders": orderbook.sell_orders
+        "sell_orders": orderbook.sell_orders,
+        "event_id": orderbook.event_id,
     }
     return processed_data
 
@@ -524,7 +525,7 @@ def consumer(body):
 input_data = {
     "event_id": 1,
     "user_id": 1,
-    "offer_type": "buy",
+    "offer_type": "BUY",
     "l1_expected_price": 5,
     "l1_order_quantity": 100,
     "is_reverse": False

@@ -24,5 +24,5 @@ now what I've to do
     push data from post to server should be reflect on frontend {cm:2024-11-10}
 
 now I've to push data from consumer 
-    this is data should be reflect in the frontend side ‸‸‸‸‸‸́́́
+    this is data should be reflect in the frontend side ‸‸‸‸‸‸
     then its done 
