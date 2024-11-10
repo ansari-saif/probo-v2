@@ -13,3 +13,6 @@ event detail page {cm:2024-11-09}
     get id from query params and call event detail page {cm:2024-11-09}
     display data like heading and yes and no pricing
 
+
+
+trade wala nahi chal rha yaarrr ....
