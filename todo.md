@@ -14,3 +14,5 @@ go through all k8 session and done it  your self
     --https://github.com/code100x/staging-ops/tree/main
 
 docker run -p 8000:8000 --env-file ../.env probo-backend
+
+fix typescript errors
