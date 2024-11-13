@@ -22,6 +22,7 @@ frontend docker done {cm:2024-11-13}
 websocket docker build {cm:2024-11-13}
 consumers docker build {cm:2024-11-13}
 
+docker-compose done 
 push to dockerhub
 deploy to k8
 change urls 
