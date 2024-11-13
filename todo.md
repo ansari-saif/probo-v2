@@ -20,7 +20,7 @@ docker run -p 3000:3000 probo-fronted
 backend docker build {cm:2024-11-13}
 frontend docker done {cm:2024-11-13}
 websocket docker build {cm:2024-11-13}
-consumers docker build
+consumers docker build {cm:2024-11-13}
 
 push to dockerhub
 deploy to k8
