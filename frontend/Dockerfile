@@ -3,6 +3,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 RUN npm install -g pnpm
+RUN npm i -g serve
 
 # Copy package files
 COPY package*.json ./
@@ -21,5 +22,4 @@ RUN pnpm run build
 EXPOSE 5173
 
 # Start the application
-CMD ["pnpm", "run", "dev", "--", "--host"]
-# node dist/start.js
+CMD [ "serve", "-s", "dist" ]
