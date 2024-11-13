@@ -16,4 +16,13 @@ go through all k8 session and done it  your self
 docker run -p 8000:8000 --env-file ../.env probo-backend
 docker run -p 3000:3000 probo-fronted
 
-frontend docker done 
+
+backend docker build {cm:2024-11-13}
+frontend docker done {cm:2024-11-13}
+websocket docker build {cm:2024-11-13}
+consumers docker build
+
+push to dockerhub
+deploy to k8
+change urls 
+deploy again
