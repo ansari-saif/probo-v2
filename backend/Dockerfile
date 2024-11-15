@@ -6,6 +6,8 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN chmod +x /usr/local/bin/uvicorn
+
 COPY ./app ./app
 
 EXPOSE 8000

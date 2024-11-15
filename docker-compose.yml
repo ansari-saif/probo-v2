@@ -5,18 +5,22 @@ services:
     build:
       context: ./backend
     image: ansarisaif1/probo-backend:latest
+    platform: linux/arm64  # Explicitly set the platform
 
   frontend:
     build:
       context: ./frontend
     image: ansarisaif1/probo-frontend:latest
+    platform: linux/arm64  # Explicitly set the platform
 
   websocket:
     build:
       context: ./websocket
     image: ansarisaif1/probo-websocket:latest
+    platform: linux/arm64  # Explicitly set the platform
 
   consumers:
     build:
       context: ./consumers
     image: ansarisaif1/probo-consumers:latest
+    platform: linux/arm64  # Explicitly set the platform
