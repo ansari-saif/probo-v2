@@ -235,16 +235,16 @@ data = [
     }
 ]
 
-# import requests
-# import json
+import requests
+import json
 
-# url = "http://localhost:8000/api/v1/events"
-# for item in data:
-#     payload = json.dumps(item)
-#     headers = {
-#     'Content-Type': 'application/json'
-#     }
+url = "http://localhost:8000/api/v1/events"
+for item in data:
+    payload = json.dumps(item)
+    headers = {
+    'Content-Type': 'application/json'
+    }
 
-#     response = requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload)
 
-#     print(response.text)
+    print(response.text)
