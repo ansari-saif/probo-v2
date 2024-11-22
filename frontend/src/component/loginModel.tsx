@@ -14,7 +14,7 @@ const getUserBalance = (token, setUserBalance) => {
         redirect: "follow"
     };
 
-    fetch("http://localhost:8000/api/v1/user/balance", requestOptions)
+    fetch("http://backend-service:8000/api/v1/user/balance", requestOptions)
         .then((response) => {
             if (response.status == 200) {
                 return response.json()
@@ -80,7 +80,7 @@ function loginModel({ isOpen, setIsOpen, setUserBalance }) {
             redirect: "follow"
         };
 
-        fetch("http://localhost:8000/api/v1/user/login", requestOptions)
+        fetch("http://backend-service:8000/api/v1/user/login", requestOptions)
             .then((response) => {
                 if (response.status === 200) {
                     setFirstStep(false);
@@ -134,7 +134,7 @@ function loginModel({ isOpen, setIsOpen, setUserBalance }) {
             redirect: "follow"
         };
 
-        fetch("http://localhost:8000/api/v1/user/validateOtp", requestOptions)
+        fetch("http://backend-service:8000/api/v1/user/validateOtp", requestOptions)
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();

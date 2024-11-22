@@ -238,7 +238,7 @@ data = [
 import requests
 import json
 
-url = "http://localhost:8000/api/v1/events"
+url = "http://backend-service:8000/api/v1/events"
 for item in data:
     payload = json.dumps(item)
     headers = {

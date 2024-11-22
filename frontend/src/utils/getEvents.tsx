@@ -5,7 +5,7 @@ export const getEvents = async () => {
     };
 
     try {
-        const response = await fetch("http://localhost:8000/api/v1/events", requestOptions);
+        const response = await fetch("http://backend-service:8000/api/v1/events", requestOptions);
         return await response.json();
     } catch (error) {
         console.error(error);
@@ -19,7 +19,7 @@ export const getEventDetail = async (id) => {
     };
 
     try {
-        const response = await fetch("http://localhost:8000/api/v1/events/"+id, requestOptions);
+        const response = await fetch("http://backend-service:8000/api/v1/events/"+id, requestOptions);
         return await response.json();
     } catch (error) {
         console.error(error);

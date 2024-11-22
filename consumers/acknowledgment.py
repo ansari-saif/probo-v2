@@ -18,7 +18,7 @@ from websocket import create_connection
 
 def consumer(body):
     event_id = body["event_id"]
-    url = f"ws://localhost:9000/ws/{event_id}"
+    url = f"ws://websocket-service:9000/ws/{event_id}"
     print(url)
     ws = create_connection(url)
     data_to_send = {

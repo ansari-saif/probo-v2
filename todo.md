@@ -27,3 +27,13 @@ push to dockerhub
 deploy to k8
 change urls 
 deploy again
+
+
+ docker buildx build --platform linux/amd64,linux/arm64 -t ansarisaif1/probo-consumers --no-cache --push ./consumers
+ docker buildx build --platform linux/amd64,linux/arm64 -t ansarisaif1/probo-backend --no-cache --push ./backend
+ docker buildx build --platform linux/amd64,linux/arm64 -t ansarisaif1/probo-websocket --no-cache --push ./websocket
+ docker buildx build --platform linux/amd64,linux/arm64 -t ansarisaif1/probo-frontend --no-cache --push ./frontend
+
+
+
+# apt-get update && apt-get install -y curl

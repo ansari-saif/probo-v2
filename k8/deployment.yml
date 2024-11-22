@@ -1,19 +1,112 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  SECRET_KEY: "deC5Uk27UaYKBpqs4Q42Fng6mSy4l1Jv"
+  ALGORITHM: "HS256"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+  OTP_SECRET_KEY: "IJTEMNRVIRLWORCZMZHXGZKFGVGUKRCEKA3FIOCMGBLTCWRUGZRQ===="
+  DATABASE_URL: "sqlite:///./test.db"
+  RABBITMQ_HOST: "armadillo.rmq.cloudamqp.com"
+  RABBITMQ_QUEUE: "orderbook_queue"
+  RABBITMQ_USERNAME: "umdicbnk"
+  RABBITMQ_PASSWORD: "aOHHAui-Mf0hsZyX7D7dW_b7DRts1ZTX"
+  RABBITMQ_PORT: "5672"
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: backend-deployment
+  labels:
+    app: backend
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      app: backend
   template:
     metadata:
       labels:
-        app: nginx
+        app: backend
     spec:
       containers:
-      - name: nginx
-        image: nginx:latest
-        ports:
-        - containerPort: 80
+      - name: backend
+        image: ansarisaif1/probo-backend2
+        envFrom:
+        - configMapRef:
+            name: app-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ansarisaif1/probo-frontend
+        envFrom:
+        - configMapRef:
+            name: app-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websocket-deployment
+  labels:
+    app: websocket
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: websocket
+  template:
+    metadata:
+      labels:
+        app: websocket
+    spec:
+      containers:
+      - name: websocket
+        image: ansarisaif1/probo-websocket
+        envFrom:
+        - configMapRef:
+            name: app-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumers-deployment
+  labels:
+    app: consumers
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: consumers
+  template:
+    metadata:
+      labels:
+        app: consumers
+    spec:
+      containers:
+      - name: consumers
+        image: ansarisaif1/probo-consumers
+        envFrom:
+        - configMapRef:
+            name: app-config

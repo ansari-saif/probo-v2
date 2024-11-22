@@ -1,26 +1,49 @@
-version: '3.8'
-
 services:
   backend:
-    build:
+    build: 
       context: ./backend
-    image: ansarisaif1/probo-backend:latest
-    platform: linux/arm64  # Explicitly set the platform
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
 
   frontend:
-    build:
+    build: 
       context: ./frontend
-    image: ansarisaif1/probo-frontend:latest
-    platform: linux/arm64  # Explicitly set the platform
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
 
   websocket:
-    build:
+    build: 
       context: ./websocket
-    image: ansarisaif1/probo-websocket:latest
-    platform: linux/arm64  # Explicitly set the platform
+    env_file:
+      - .env
+    ports:
+      - "9000:9000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
 
   consumers:
-    build:
+    build: 
       context: ./consumers
-    image: ansarisaif1/probo-consumers:latest
-    platform: linux/arm64  # Explicitly set the platform
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - websocket
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
