@@ -2,7 +2,7 @@ trade wala nahi chal rha yaarrr ....
 call get user balance api
 toast on order
 
-containerized all services
+containerized all services --done
     backend
     websocket
     consuemrs

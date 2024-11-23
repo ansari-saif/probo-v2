@@ -20,6 +20,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-deployment
+  namespace: probo
   labels:
     app: backend
 spec:
@@ -44,6 +45,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-deployment
+  namespace: probo
+
   labels:
     app: frontend
 spec:
@@ -68,6 +71,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: websocket-deployment
+  namespace: probo
+
   labels:
     app: websocket
 spec:
@@ -92,6 +97,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: consumers-deployment
+  namespace: probo
+
   labels:
     app: consumers
 spec:
