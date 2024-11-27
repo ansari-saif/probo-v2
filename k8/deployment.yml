@@ -19,6 +19,31 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: frontend-deployment
+
+  labels:
+    app: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ansarisaif1/probo-frontend
+        envFrom:
+        - configMapRef:
+            name: app-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: backend-deployment
   labels:
     app: backend
