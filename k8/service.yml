@@ -10,7 +10,7 @@ spec:
     app: backend
   ports:
     - protocol: TCP
-      port: 8000
+      port: 80
       targetPort: 8000
   type: LoadBalancer
 
@@ -26,6 +26,6 @@ spec:
     app: websocket
   ports:
     - protocol: TCP
-      port: 9000
+      port: 80
       targetPort: 9000
   type: LoadBalancer

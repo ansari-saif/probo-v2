@@ -43,7 +43,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-	BASE: "http://127.0.0.1:8000",
+	BASE: "http://206.189.249.236:8000",
 	CREDENTIALS: "include",
 	ENCODE_PATH: undefined,
 	HEADERS: undefined,

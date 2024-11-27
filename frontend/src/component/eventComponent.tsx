@@ -101,7 +101,7 @@ export const EventsCompo = () => {
     const id = params.get('id');
     
     if (id) {
-      const ws = new WebSocket(`ws://websocket-service:9000/ws/${id}`);
+      const ws = new WebSocket(`ws://websocket.ansarisaif.com/ws/${id}`);
       
       ws.onmessage = (event) => {
         try {

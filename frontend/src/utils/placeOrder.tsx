@@ -21,7 +21,7 @@ export const  orderInitiate = (event_id, quantity, price, offer_type)=>{
       redirect: "follow"
     };
     
-    fetch("http://backend-service:8000/api/v1/oms/order/initiate", requestOptions)
+    fetch("http://backend.ansarisaif.com/api/v1/oms/order/initiate", requestOptions)
       .then((response) => response.text())
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
